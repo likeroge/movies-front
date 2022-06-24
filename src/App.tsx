@@ -1,25 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.scss";
+import { ContentList } from "./components/content-list/content-list";
+import { Footer } from "./components/footer/footer";
+import { Header } from "./components/header/header";
+import { Main } from "./components/main/main";
+import { ModalDiagram } from "./components/modal-diagram/modal-diagram";
+import { ModalFilter } from "./components/modal-filter/modal-filter";
+import { useModal } from "./hooks/useModal";
+
+export interface IFetchConfig {
+  filter: string;
+  text: string;
+}
 
 function App() {
+  const [fetchConfig, setFetchConfig] = useState<IFetchConfig>({
+    filter: "",
+    text: "",
+  });
+  const filterModal = useModal();
+  const diagramModal = useModal();
+
+  console.log(fetchConfig);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <ModalFilter
+        visible={filterModal.visible}
+        setVisible={filterModal.setVisible}
+        setFetchConfig={setFetchConfig}
+      />
+      <ModalDiagram
+        visible={diagramModal.visible}
+        setVisible={diagramModal.setVisible}
+      />
+      <div className="app-wrapper">
+        <Header />
+        <Main>
+          <h1>Main part</h1>
+          <ContentList fetchConfig={fetchConfig} />
+        </Main>
+        <Footer
+          setFilterVisible={filterModal.setVisible}
+          filterVisible={filterModal.visible}
+          setDiagramVisible={diagramModal.setVisible}
+        />
+      </div>
+    </>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import "./modal-diagram.scss";
 import closeIcon from "../assets/icons/closeIcon.png";
 import {
@@ -11,6 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import axios from "axios";
 
 interface IModalDiagramProps {
   visible: boolean;
@@ -21,6 +22,10 @@ export const ModalDiagram: FC<IModalDiagramProps> = ({
   visible,
   setVisible,
 }) => {
+  const [ratingDiagramData, setRatingDiagramData] = useState();
+  const [genresByPopularityData, setGenresByPopularityData] = useState();
+  const [activeDiagram, setActivDiagram] = useState();
+
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -29,27 +34,24 @@ export const ModalDiagram: FC<IModalDiagramProps> = ({
     Tooltip,
     Legend
   );
-  const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-  ];
 
-  const data = {
-    labels,
+  const data1 = {
+    labels: [],
     datasets: [
       {
-        label: "Dataset 1",
-        data: labels,
+        label: "Диаграмма рейтингов фильмов",
+        data: ratingDiagramData,
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
+    ],
+  };
+
+  const data2 = {
+    labels: [],
+    datasets: [
       {
-        label: "Dataset 2",
-        data: labels,
+        label: "Жанры фильмов по популярности",
+        data: genresByPopularityData,
         backgroundColor: "rgba(53, 162, 235, 0.5)",
       },
     ],
@@ -63,16 +65,33 @@ export const ModalDiagram: FC<IModalDiagramProps> = ({
       },
       title: {
         display: true,
-        text: "Chart.js Bar Chart",
       },
     },
   };
+
+  useEffect(() => {
+    async function fetchDiagramData() {
+      const { data } = await axios.get("http://localhost:8000/movies/diagram");
+      console.log(data);
+
+      setRatingDiagramData(data.rating_diagram_data);
+      setGenresByPopularityData(data.genres_by_popularity_data);
+    }
+    fetchDiagramData();
+  }, []);
 
   return (
     <div
       className="modal-diagram container"
       style={{ display: visible ? "" : "none" }}
     >
+      <div className="diagram-control">
+        <label htmlFor="">Рейтинг фильмов</label>
+        <input type="radio" name="diagram" id="" defaultChecked />
+        <label htmlFor="">Жанры фильмов</label>
+        <input type="radio" name="diagram" id="" />
+      </div>
+
       <img
         className="modal-filter__close-icon"
         src={closeIcon}
@@ -80,13 +99,11 @@ export const ModalDiagram: FC<IModalDiagramProps> = ({
         alt="closeIcon"
       />
       <div className="modal-diagram__genre-rating">
-        <h1>Жанры</h1>
-        <Bar options={options} data={data} />
+        <Bar options={options} data={data1} />
       </div>
-      <div className="modal-diagram__movie-rating">
-        <h1>Фильмы</h1>
-        <Bar options={options} data={data} />
-      </div>
+      {/* <div className="modal-diagram__movie-rating">
+        <Bar options={options} data={data2} />
+      </div> */}
     </div>
   );
 };

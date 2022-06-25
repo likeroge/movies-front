@@ -36,7 +36,6 @@ function App() {
       <div className="app-wrapper">
         <Header />
         <Main>
-          <h1>Main part</h1>
           <ContentList fetchConfig={fetchConfig} />
         </Main>
         <Footer

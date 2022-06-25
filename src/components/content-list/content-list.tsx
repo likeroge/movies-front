@@ -2,12 +2,19 @@ import axios from "axios";
 import React, { FC, useEffect, useState } from "react";
 import { IFetchConfig } from "../../App";
 import "./content-list.scss";
+import { config } from "../../config";
 
-interface IPost {
-  userId: number;
-  id: number;
+interface IFilm {
+  id: string;
+  created_at: string;
+  updated_at: string;
   title: string;
-  body: string;
+  description: string;
+  creation_date?: string;
+  certificate?: string;
+  file_path?: string;
+  rating: string;
+  type: string;
 }
 
 interface IContentListProps {
@@ -15,27 +22,41 @@ interface IContentListProps {
 }
 
 export const ContentList: FC<IContentListProps> = ({ fetchConfig }) => {
-  let url = "https://jsonplaceholder.typicode.com/posts";
-
-  const [posts, setPosts] = useState<IPost[]>([]);
+  // let url = "https://jsonplaceholder.typicode.com/posts";
+  let url = config.apiUrl;
+  const [films, setFilms] = useState<IFilm[]>([]);
   useEffect(() => {
     async function fetchData() {
-      let { data } = await axios.get(url);
-      if (fetchConfig.text) {
-        data = data.filter((el: IPost) => el.id < 10);
-      }
-      setPosts(data);
+      const { data } = await axios.get(url, {
+        params: { filter: fetchConfig.filter, text: fetchConfig.text },
+      });
+      setFilms(data);
     }
     fetchData();
   }, [fetchConfig.text]);
 
+  console.log(fetchConfig);
+
   return (
-    <div>
-      {posts.map((post) => (
-        <div key={post.id}>
-          <h2>{post.title}</h2>
-        </div>
-      ))}
+    <div className="content-list">
+      <table className="table">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Фильм</th>
+            <th>Рейтинг</th>
+          </tr>
+        </thead>
+        {films.map((film: IFilm, idx) => (
+          <tbody key={film.id + Math.random()}>
+            <tr>
+              <td>{idx + 1}</td>
+              <td>{film.title}</td>
+              <td>{film.rating}</td>
+            </tr>
+          </tbody>
+        ))}
+      </table>
     </div>
   );
 };

@@ -21,7 +21,6 @@ function App() {
   const filterModal = useModal();
   const diagramModal = useModal();
 
-  console.log(fetchConfig);
   return (
     <>
       <ModalFilter

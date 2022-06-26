@@ -22,20 +22,16 @@ interface IContentListProps {
 }
 
 export const ContentList: FC<IContentListProps> = ({ fetchConfig }) => {
-  // let url = "https://jsonplaceholder.typicode.com/posts";
-  let url = config.apiUrl;
   const [films, setFilms] = useState<IFilm[]>([]);
   useEffect(() => {
     async function fetchData() {
-      const { data } = await axios.get(url, {
+      const { data } = await axios.get(config.apiUrl, {
         params: { filter: fetchConfig.filter, text: fetchConfig.text },
       });
       setFilms(data);
     }
     fetchData();
-  }, [fetchConfig.text]);
-
-  console.log(fetchConfig);
+  }, [fetchConfig.text, fetchConfig.filter]);
 
   return (
     <div className="content-list">

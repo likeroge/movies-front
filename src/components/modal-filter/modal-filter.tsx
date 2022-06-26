@@ -1,4 +1,4 @@
-import React, { FC, MutableRefObject, useRef } from "react";
+import React, { FC, useRef } from "react";
 import "./modal-filter.scss";
 import closeIcon from "../assets/icons/closeIcon.png";
 
@@ -15,8 +15,6 @@ export const ModalFilter: FC<{
       filter: filterType.current?.value,
       text: text.current?.value,
     });
-    console.log(filterType.current?.value);
-    console.log(text.current?.value);
     setVisible(false);
   };
   return (
